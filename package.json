@@ -9,13 +9,15 @@
   "categories": [
     "Other"
   ],
-  "activationEvents": [],
+  "activationEvents": [
+    "onCommand:my-first-extension.countIncludes"
+  ],
   "main": "./dist/extension.js",
   "contributes": {
     "commands": [
       {
-        "command": "my-first-extension.helloWorld",
-        "title": "Hello World"
+        "command": "my-first-extension.countIncludes",
+        "title": "Count C++ Includes"
       }
     ]
   },

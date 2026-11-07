@@ -1,28 +1,36 @@
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
 
-// This method is called when your extension is activated
-// Your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
+    console.log('Плагин "my-first-extension" активирован');
 
-	// Use the console to output diagnostic information (console.log) and errors (console.error)
-	// This line of code will only be executed once when your extension is activated
-	console.log('Congratulations, your extension "my-first-extension" is now active!');
+    let disposable = vscode.commands.registerCommand('my-first-extension.countIncludes', () => {
+        const editor = vscode.window.activeTextEditor;
+        
+        // 1. Проверяем, открыт ли вообще файл
+        if (!editor) {
+            vscode.window.showWarningMessage('Откройте файл C++ для подсчёта.');
+            return;
+        }
 
-	// The command has been defined in the package.json file
-	// Now provide the implementation of the command with registerCommand
-	// The commandId parameter must match the command field in package.json
-	const disposable = vscode.commands.registerCommand('my-first-extension.helloWorld', () => {
-		// The code you place here will be executed every time your command is executed
-		// Display a message box to the user
-		vscode.window.showInformationMessage('Hello World from my-first-extension!');
-	});
+        const document = editor.document;
+        
+        // 2. Проверяем, что это C++ или C файл
+        if (document.languageId !== 'cpp' && document.languageId !== 'c') {
+            vscode.window.showWarningMessage('Текущий файл не является C++ или C файлом.');
+            return;
+        }
 
-	context.subscriptions.push(disposable);
+        // 3. Получаем текст и ищем #include
+        const text = document.getText();
+        const includeRegex = /^\s*#\s*include\s+[<"][^>"]+[>"]/gm;
+        const matches = text.match(includeRegex);
+        const count = matches ? matches.length : 0;
+
+        // 4. Показываем результат
+        vscode.window.showInformationMessage(`Найдено директив #include: ${count}`);
+    });
+
+    context.subscriptions.push(disposable);
 }
 
-// This method is called when your extension is deactivated
-export function deactivate() {
-	console.log('extension "my-first-extension" is deactivated');
-}
+export function deactivate() {}
